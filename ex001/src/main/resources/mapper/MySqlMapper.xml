@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.MysqlMapper">
+    <select id="getTime2" resultType="string">
+        select now()
+    </select>
+    
+    <select id="slist" resultType="com.example.domain.StudentsVO">
+    	select * from students
+    </select>
+    
+     <select id="plist" resultType="string">
+    	select pname from professors
+    </select>
+    
+     <select id="sread" resultType="com.example.domain.StudentsVO">
+    	select * from students where scode=#{scode} 
+    </select>
+</mapper>

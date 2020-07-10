@@ -1,0 +1,72 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>카카오 이미지 훔치기</title>
+	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+</head>
+<body>
+	<h1>[이미지 검색]</h1>
+	<input type="text" id="query" value="김치">
+	<button id="btnSearch">검색</button>
+	
+	<table id="tbl" border=1></table>    
+	<script id="temp" type="text/x-handlebars-template"> 
+		{{#each documents}}
+			<tr class="row">
+				<td width=500><img src="{{image_url}}" width=200></td>
+				<td><button>다운로드</button></td>
+			</tr>
+			<tr>
+				<td class="image" colspan="2" style="font-size:8px;">
+				{{image_url}}
+				</td>
+			</tr>
+		{{/each}}
+	</script>
+</body>
+<script>
+
+	getList();
+	
+	$("#query").keydown(function(key){
+		if(key.keyCode==13) {
+			getList();
+		}
+	});
+	
+	$("#btnSearch").on("click", function(){
+		getList();
+	});
+	
+	$("#tbl").on("click", ".row button", function(){
+		var image=$(".image").attr("image");
+		alert(image);
+		$.ajax({
+			type:"get",
+			url:"/download",
+			data:{"image":image},
+			
+		});
+	});
+	
+	function getList() {
+		var query=$("#query").val();
+		$.ajax({
+            type:"get",
+            url:"https://dapi.kakao.com/v2/search/image",
+            headers:{"Authorization":"KakaoAK 2d06e7f6c04a5b6cff4d94cebfef1694"},
+            dataType:"json",
+            data:{"query":query, "size":50},
+            success:function(data){
+            	var temp = Handlebars.compile($("#temp").html());
+				$("#tbl").html(temp(data));
+            }
+        });
+	}
+</script>
+</html>

@@ -1,0 +1,148 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>거래내역</title>
+	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.1/handlebars.js"></script>
+	<style>
+		select {height:25px;}
+	</style>
+</head>
+<body>
+	<jsp:include page="../menu.jsp"/>
+	<hr>
+	<h1>[거래내역]</h1>
+	<table border=1>
+		<tr>
+			<td style="background:gray; color:white;">계좌번호</td>
+			<td width=110 id="ano">${vo.ano}</td>
+		
+			<td style="background:gray; color:white;">계좌주명</td>
+			<td width=110>${vo.name}</td>
+		
+			<td style="background:gray; color:white;">잔액</td>
+			<!--  <td><input type="text" id="balance" value="${vo.balance}" size="5" readonly></td> -->
+			<td width=200 id="balance">${vo.balance}원</td>
+		</tr>
+	</table>
+	<br>
+	<div style="width:600px; margin:10px 0px 10px 0px; border:1px dotted black; padding:10px;">
+		이제계좌번호 : 
+		<select id="tradeNo">
+			<c:forEach items="${list}" var="v">
+				<c:if test="${vo.ano!=v.ano}">
+				<option value="${v.ano}">${v.ano} : ${v.name}</option>
+				</c:if>
+			</c:forEach>
+		</select>
+		<input type="text" id="amount" placeholder="숫자만 입력하세요.">원
+		<button id="btnInsert">이체</button>
+	</div>
+	<button onClick="location.href='list'">목록</button>
+	<br>
+	<table id="tbl" border=1></table>    
+	<script id="temp" type="text/x-handlebars-template"> 
+		<tr>
+			<th width=100>계좌번호</th>
+			<th width=100>입금/출금</th>
+			<th width=100>거래금액</th>
+			<th width=150>거래일</th>
+		</tr>
+	{{#each .}}
+		<tr class="row" {{{printStyle type}}}>
+			<td class="tradeNo">{{tradeNo}}:{{name}}</td>
+			<td>{{{printType type}}}</td>
+			<td>{{amount}}</td>
+			<td>{{tradeDate}}</td>
+		</tr>
+	{{/each}}
+	</script>
+</body>
+<script>
+	var ano="${vo.ano}"
+	getList();
+	
+	Handlebars.registerHelper("printType", function(type){
+	      var src;
+	      if(type==1) {
+	    	  src="<b>출금</b>";
+	      } else {
+	    	  src="<b>입금</b>";
+	      }
+	      return src
+	   });
+	
+	Handlebars.registerHelper("printStyle", function(type){
+	      var src;
+	      if(type==1) {
+	    	  src="style=color:red";
+	      } else {
+	    	  src="style=color:blue";
+	      }
+	      return src
+	   });
+	
+	$("#btnInsert").on("click", function(){
+		if(!confirm("이체하시겠습니까? 사람을 믿지 마십시오.")) return;
+		var ano=$("#ano").html();
+		var tradeNo=$("#tradeNo").val();
+		var amount=parseInt($("#amount").val());
+		var type="1";
+		var balance=parseInt($("#balance").html());
+		
+		if(amount>balance) {
+			alert("잔액이 부족합니다.");
+			return;
+		}
+		
+		if($("#amount").val()=="") {
+			alert("입금액을 입력하세요.");
+			return;
+		}
+		
+		if(amount<=0) {
+			alert("입금액을 올바르게 입력하세요.");
+			return;
+		}
+		
+		$.ajax({
+			type:"post",
+			url:"/trade/insert",
+			data:{"ano":ano , "tradeNo":tradeNo , "amount":amount , "type":type },
+			success:function(){
+				alert("이체가 완료되었습니다.");
+				$("#amount").val("");
+				$.ajax({
+					type:"get",
+					url:"/account/getBalance",
+					data:{"ano":ano},
+					success:function(data){
+						$("#balance").html(data.balance);
+					}
+				});
+				getList();
+			}
+		});
+		
+	});
+	
+	function getList() {
+		
+	$.ajax({
+		type : "get",
+		url : "/trade/list",
+		data:{"ano":ano},
+		dataType : "json",
+		success : function(data) {
+			var temp = Handlebars.compile($("#temp").html());
+			$("#tbl").html(temp(data));
+			}
+		});
+	}
+</script>
+</html>

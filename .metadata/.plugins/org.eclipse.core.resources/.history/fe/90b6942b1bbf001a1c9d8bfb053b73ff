@@ -1,0 +1,6 @@
+package com.example.mapper;
+
+public interface ProductMapper {
+	
+	public void insert(ProductVO vo);
+}

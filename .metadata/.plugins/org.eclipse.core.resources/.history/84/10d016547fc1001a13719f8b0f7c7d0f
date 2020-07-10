@@ -1,0 +1,8 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<div id="divMenu" style="width:800px; padding:10px; background:gray; color:white;">
+	<button onClick="location.href='/board/insert'">글쓰기</button>
+	<button onClick="location.href='/user/login'">로그인</button>
+	<button onClick="location.href='/board/list'">글목록</button>
+</div>

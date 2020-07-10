@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.StuMapper">
+
+    <select id="list" resultType="com.example.domain.StuVO">
+        select students.*, pname from students left join professors on advisor=pcode order by sname desc limit #{pageStart}, #{perPageNum}
+    </select>
+    
+    <select id="read" resultType="com.example.domain.StuVO">
+    	select * from students where scode=#{scode}
+    </select>
+    
+    <select id="totalCount" resultType="int">
+    	select count(*) from students
+    </select>
+    
+    <update id="update">
+    	update students set sname=#{sname} ,dept=#{dept}, year=#{year}, birthday=#{birthday}, advisor=#{advisor} where scode=#{scode}
+    </update>
+    
+    <delete id="delete">
+    	delete from students where scode=#{scode}
+    </delete>
+    
+    <select id="enrollCount" resultType="int">
+    	select count(*) from enrollments where scode=#{scode}
+    </select>
+    
+    <select id="listEnroll" resultType="com.example.domain.EnrollVO">
+    	select e.*, lname from enrollments e, courses c where c.lcode=e.lcode and scode=#{scode};
+    </select>
+    
+</mapper>

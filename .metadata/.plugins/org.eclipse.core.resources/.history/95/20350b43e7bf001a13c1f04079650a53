@@ -1,0 +1,9 @@
+package com.example.domain;
+
+public class UserVO {
+	
+	private String id;
+	private String pass;
+	private String name;
+	private String image;
+}

@@ -1,0 +1,5 @@
+package com.example.intercptor;
+
+public class AuthInterceptor {
+
+}

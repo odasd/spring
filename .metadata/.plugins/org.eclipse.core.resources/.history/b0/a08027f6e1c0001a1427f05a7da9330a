@@ -1,0 +1,6 @@
+package com.example.mapper;
+
+public interface AirMapper {
+	
+	public void insert(AirVO);
+}

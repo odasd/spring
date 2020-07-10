@@ -1,0 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+
+<div id="divMenu">
+	<span class="item">나의통장</span>
+	<span class="item"><a href="/user/receive">받은 메세지함</a></span>
+	<span class="item">보낸 메세지함</span>
+	<span class="item"></span>
+</div>
